@@ -92,7 +92,7 @@
 		<h2>&amp; the Twitterers Who Twote Them</h2>
 	</header>
 
-	<input type="search" id="search" name="search" value="coffee" required />
+	<input type="search" id="search" name="search" value="" required />
 	<button type="button" id="search-button" name="search-button">Find Tweets</button>
 
 	<section class="users clearfix">
@@ -116,9 +116,46 @@
 <script type="text/javascript" src="icanhaz.min.js"></script>
 
 <script type="text/javascript">
-	// YOUR JS GOES HERE
-	// here's the twitter URL template
-	// http://search.twitter.com/search.json?q=SEARCH_VALUE_HERE&rpp=20&include_entities=false&result_type=mixed
+$(document).ready(function() {
+
+	$('#search-button').click(function(e) {
+
+		
+
+		var searchword = $('#search').val();
+
+			$.ajax({
+			url: 'http://search.twitter.com/search.json?q=' + searchword + '&rpp=20&include_entities=false&result_type=recent',
+			dataType: 'jsonp',
+			type: 'GET',
+			jsonpCallback: 'handle_tweets'
+		});
+	});
+});
+
+function handle_tweets(data) {
+	//var first_tweet = data.results[0];
+	clear_users();
+
+	for( var i = 0; i < data.results.length; i++) {
+		var tweet = data.results[i];
+		$('#user-list').append($('<div class="user"><a href="https://twitter.com/#!/' + tweet.from_user + '" target="_blank"><img src="' + tweet.profile_image_url + '"></img></a></div>'));
+		var li = $('<li class="tweet"><a href="https://twitter.com/#!/' + tweet.from_user + '" target="_blank"><img src="' + tweet.profile_image_url + '"></img></a>' + tweet.text + '</li>')
+		$('#tweet-list').append(li);
+
+	
+	console.log(tweet.from_user);
+	console.log(tweet.text);
+	console.log(tweet.profile_image_url);
+	}
+
+
+}
+
+function clear_users() {
+	$('.user').remove();
+	$('.tweet').remove();
+}
 </script>
 
 </body>
